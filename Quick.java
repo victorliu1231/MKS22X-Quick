@@ -6,23 +6,45 @@ public class Quick{
     /*Modify the array to be in increasing order. 
     */   
     public static void quicksort(int[] data){
-        hi
+        quickSortHelp(data, 0, data.length-1);
+    }
+
+    private static void quickSortHelp(int[] data, int start, int end){
+        int middleIndex = ((end - start + 1) / 2) + start; //end - start + 1 gives the length of the subsection in this recursive call
+        quickselect(data, middleIndex, start, end);
+        //System.out.println("start: "+start+", end: "+end+", middleIndex: "+middleIndex+", test: "+Arrays.toString(data));
+        //element at middle index is now in place
+        //if middleIndex <= start+1, then the element before middleIndex is already in place
+        if (middleIndex > start+1){
+            quickSortHelp(data, start, middleIndex - 1);
+        }
+        //if middleIndex is the penultimate index on the list (ie end - 1), then the last index is already in place
+        if (middleIndex < end - 1){
+            quickSortHelp(data, middleIndex + 1, end);
+        }
     }
 
 
     /*return the value that is the kth smallest value of the array.
     */
-    public static int quickselect(int[] data, int k){
-        return quickHelp(data, k, 0, data.length-1);
+    private static int quickselect(int[] data, int k, int start, int end){
+        return quickSelectHelp(data, k, start, end);
     }
 
-    private static int quickHelp(int[] data, int k, int start, int end){
+    /*return the value that is the kth smallest value of the array.
+    */
+    //for practice
+    public static int quickselect(int[] data, int k){
+        return quickSelectHelp(data, k, 0, data.length-1);
+    }
+
+    private static int quickSelectHelp(int[] data, int k, int start, int end){
         int pivotIndex = partitionDutch(data, start, end);
         if (k < pivotIndex){
-            return quickHelp(data,k,start,pivotIndex-1);
+            return quickSelectHelp(data,k,start,pivotIndex-1);
         }
         if (k > pivotIndex){
-            return quickHelp(data,k,pivotIndex+1,end);
+            return quickSelectHelp(data,k,pivotIndex+1,end);
         } else {
             return data[pivotIndex];
         }
