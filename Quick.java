@@ -3,6 +3,13 @@ import java.util.Arrays;
 
 public class Quick{
 
+    /*Modify the array to be in increasing order. 
+    */   
+    public static void quicksort(int[] data){
+        hi
+    }
+
+
     /*return the value that is the kth smallest value of the array.
     */
     public static int quickselect(int[] data, int k){
@@ -56,6 +63,7 @@ public class Quick{
               pivotIndex = start;
               start++;
           }
+          //this section of code terminates the rest of the loop in effect
           if (start == end){
               if (data[start] >= pivot){
                   int c = data[start-1];
@@ -69,13 +77,25 @@ public class Quick{
                   pivotIndex = start;
               }
           }
+          //swapping part of the code
           if (data[start] < pivot){
               start++;
-          } else {
+          } else if (data[start] > pivot){
               int b = data[end];
               data[end] = data[start];
               data[start] = b;
               end--;
+          } else {
+              //50-50 shot of throwing it left or right of pivot
+              int chance = Math.abs(r.nextInt(2));
+              if (chance == 0){
+                  start++;
+              } else {
+                int b = data[end];
+                data[end] = data[start];
+                data[start] = b;
+                end--;
+              }
           }
       }
       return pivotIndex;
