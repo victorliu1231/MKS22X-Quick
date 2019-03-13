@@ -5,7 +5,7 @@ public class VDriver{
     public static void main(String[]args){
 
         //TEST RUNTIME
-        
+
         int[]ary = { 2, 10, 15, 23, 0,  5, 1, 3, -1, -1 ,-1 , 2, 3, 4, 1, 4,5, 10, 199, -19372};  //sorted :  {0,2,5,10,15,23}
         /*System.out.println(Quick.quickselect( ary , 0 )); //would return 0
         System.out.println(Quick.quickselect( ary , 1 ));  //would return 2
@@ -16,15 +16,16 @@ public class VDriver{
         long[] arytimes = sortTimes(ary);
         System.out.println(arytimes[0]);
         System.out.println(arytimes[1]);
-        
 
+
+/*
         for (int i = 1; i < 1000; i++) {
             try {
                 Random gen = new Random();
                 int[] test = new int[i];
                 int[] duplicate = new int[i];
                 for (int j = 0; j < test.length; j++) {
-                    int randGenInt = gen.nextInt() % 1000;
+                    int randGenInt = Math.abs(gen.nextInt()) % 100;
                     test[j] = randGenInt;
                     duplicate[j] = randGenInt;
                 }
@@ -42,9 +43,9 @@ public class VDriver{
             //System.out.println("--------");
         }
         System.out.println("R: SUCCESS"); //R for random
+*/
 
-        
-        Random why = new Random();
+        /*Random why = new Random();
         int[] ugh = new int[10000];
         int[] duplicate1 = new int[10000];
         for (int i = 0; i < ugh.length; i++){
@@ -65,36 +66,43 @@ public class VDriver{
         }
         Quick.quicksort(ugh2);
         System.out.println(hasSortedRight(ugh2, duplicate2));
+        */
 
-        
-        for (int i = 1; i < 5000; i++) {
+
+//quicksort starts slowing in the couple of millions
+//selectionsort starts slowing in the thousands
+//test with a lot of duplicates and with no duplicates
+        long quickDiffAvg = 0;
+        long selectionDiffAvg = 0;
+        int numLoops = 0;
+        for (int i = 500000; i <= 4000000; i = i*2) {
             try {
+              numLoops++;
                 Random gen = new Random();
                 int[] test = new int[i];
                 int[] duplicate = new int[i];
                 for (int j = 0; j < test.length; j++) {
-                    int randGenInt = gen.nextInt() % 1000;
+                    int randGenInt = Math.abs(gen.nextInt());
                     test[j] = randGenInt;
                     duplicate[j] = randGenInt;
                 }
                 long[] sortTimesAry = sortTimes(test);
-                long quickDiffMillis = sortTimesAry[0];
-                long selectionDiffMillis = sortTimesAry[1];
-                if (sortTimesAry[1] < sortTimesAry[0]){
-                    System.out.println("selection is "+((quickDiffMillis - selectionDiffMillis))+" milliseconds faster");
-                    System.out.println("SLOWER ON LENGTH " + i);
-                    System.out.println("--------------------------------");
-                }
+                quickDiffAvg += sortTimesAry[0];
+                selectionDiffAvg = sortTimesAry[1];
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.print("FAILURE ON LENGTH " + i);
             }
         }
-        
+        quickDiffAvg = quickDiffAvg / numLoops;
+        selectionDiffAvg = selectionDiffAvg / numLoops;
+        System.out.println("Arrays.sort: "+selectionDiffAvg+" milliseconds");
+        System.out.println("quickSort: "+quickDiffAvg+" milliseconds");
+
     }
 
     public static boolean hasSortedRight(int[] test, int[] duplicate){
-        selectionSort(duplicate);
+        Arrays.sort(duplicate);
         for (int i = 0; i < test.length; i++){
             if (test[i] != duplicate[i]){
                 return false;
@@ -119,6 +127,24 @@ public class VDriver{
         return true;
     }
 
+    //[0] is quicksort time, [1] is selectionsort time
+    public static long[] sortTimes(int[] test){
+        int[] duplicate = new int[test.length];
+        for (int i = 0; i < test.length; i++){
+            duplicate[i] = test[i];
+        }
+        long quickStartMillis = System.currentTimeMillis();
+        Quick.quicksort(test);
+        long quickEndMillis = System.currentTimeMillis();
+        long quickDiffMillis = (quickEndMillis - quickStartMillis);
+        long selectionStartMillis = System.currentTimeMillis();
+        Arrays.sort(duplicate);
+        long selectionEndMillis = System.currentTimeMillis();
+        long selectionDiffMillis = (selectionEndMillis - selectionStartMillis);
+        long[] sortTimes = new long[]{quickDiffMillis, selectionDiffMillis};
+        return sortTimes;
+    }
+
     public static void selectionSort(int [] ary) { //O(n^2); n passes with n work each
         int min;
         int indexOfMin = -1;
@@ -139,23 +165,5 @@ public class VDriver{
             ary[i] = min;
             ary[indexOfMin] = storer;
         }
-    }
-
-    //[0] is quicksort time, [1] is selectionsort time
-    public static long[] sortTimes(int[] test){
-        int[] duplicate = new int[test.length];
-        for (int i = 0; i < test.length; i++){
-            duplicate[i] = test[i];
-        }
-        long quickStartMillis = System.currentTimeMillis();
-        Quick.quicksort(test);
-        long quickEndMillis = System.currentTimeMillis();
-        long quickDiffMillis = (quickEndMillis - quickStartMillis) / 1000;
-        long selectionStartMillis = System.currentTimeMillis();
-        selectionSort(duplicate);
-        long selectionEndMillis = System.currentTimeMillis();
-        long selectionDiffMillis = (selectionEndMillis - selectionStartMillis) / 1000;
-        long[] sortTimes = new long[]{quickDiffMillis, selectionDiffMillis};
-        return sortTimes;
     }
 }
