@@ -3,86 +3,55 @@ import java.util.Arrays;
 
 public class VDriver{
     public static void main(String[]args){
-
-        //TEST RUNTIME
-
-        int[]ary = { 2, 10, 15, 23, 0,  5, 1, 3, -1, -1 ,-1 , 2, 3, 4, 1, 4,5, 10, 199, -19372};  //sorted :  {0,2,5,10,15,23}
-        /*System.out.println(Quick.quickselect( ary , 0 )); //would return 0
-        System.out.println(Quick.quickselect( ary , 1 ));  //would return 2
-        System.out.println(Quick.quickselect( ary , 2 ));  //would return 5
-        System.out.println(Quick.quickselect( ary , 3 ));  //would return 10
-        System.out.println(Quick.quickselect( ary , 4 )); // would return 15
-        System.out.println(Quick.quickselect( ary , 5 ));  //would return 23*/
-        long[] arytimes = sortTimes(ary);
-        System.out.println(arytimes[0]);
-        System.out.println(arytimes[1]);
-
-
-/*
-        for (int i = 1; i < 1000; i++) {
-            try {
-                Random gen = new Random();
-                int[] test = new int[i];
-                int[] duplicate = new int[i];
-                for (int j = 0; j < test.length; j++) {
-                    int randGenInt = Math.abs(gen.nextInt()) % 100;
-                    test[j] = randGenInt;
-                    duplicate[j] = randGenInt;
-                }
-                Quick.quicksort(test);
-                if (!hasSortedRight(test, duplicate)) {
-                    //System.out.println("test: "+Arrays.toString(test));
-                    System.out.print("FAILURE ON LENGTH " + i);
-                    System.exit(1);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.print("FAILURE ON LENGTH " + i);
-                System.exit(1);
+        //test(500000,4000000);
+        //test(1000000,1000000);
+        //test(10000000,10000000);
+        int[] test = new int[]{-1,2,3,-1,2};
+        System.out.println(Quick.quickselect(test, 0));
+        System.out.println(Quick.quickselect(test, 1));
+        System.out.println(Quick.quickselect(test, 2));
+        System.out.println(Quick.quickselect(test, 3));
+        System.out.println(Quick.quickselect(test, 4));
+        
+        for (int i = 1; i <= 1000; i++){
+            int[] ary = new int[i];
+            Random r = new Random();
+            for (int in = 0; in < ary.length; in++){
+                ary[in] = Math.abs(r.nextInt() % 100);
             }
-            //System.out.println("--------");
+            int k = Math.abs(r.nextInt()) % i;
+            int ok = Quick.quickselect(ary, k);
+            try {
+                if (!test(ary, k)){
+                    System.out.println(k);
+                    System.out.println(ok);
+                    System.out.println("sad");
+                    System.out.println(Arrays.toString(ary));
+                    System.exit(0);
+                }
+            } catch (Exception e){
+                System.out.println("oops");
+                e.printStackTrace();
+                System.exit(0);
+            }
         }
-        System.out.println("R: SUCCESS"); //R for random
-*/
+    }
 
-        /*Random why = new Random();
-        int[] ugh = new int[10000];
-        int[] duplicate1 = new int[10000];
-        for (int i = 0; i < ugh.length; i++){
-            int randGenInt = Math.abs(why.nextInt(2));
-            ugh[i] = randGenInt;
-            duplicate1[i] = randGenInt;
-        }
-        Quick.quicksort(ugh);
-        System.out.println(hasSortedRight(ugh, duplicate1));
-
-        Random why2 = new Random();
-        int[] ugh2 = new int[10000];
-        int[] duplicate2 = new int[10000];
-        for (int i = 0; i < ugh2.length; i++){
-            int randGenInt = Math.abs(why2.nextInt(1));
-            ugh2[i] = randGenInt;
-            duplicate2[i] = randGenInt;
-        }
-        Quick.quicksort(ugh2);
-        System.out.println(hasSortedRight(ugh2, duplicate2));
-        */
-
-
-//quicksort starts slowing in the couple of millions
-//selectionsort starts slowing in the thousands
-//test with a lot of duplicates and with no duplicates
+    public static void test(int start, int end){
+        //quicksort starts slowing in the couple of millions
+        //selectionsort starts slowing in the thousands
+        //test with a lot of duplicates and with no duplicates
         long quickDiffAvg = 0;
         long selectionDiffAvg = 0;
         int numLoops = 0;
-        for (int i = 500000; i <= 4000000; i = i*2) {
+        for (int i = start; i <= end; i = i*2) {
             try {
               numLoops++;
                 Random gen = new Random();
                 int[] test = new int[i];
                 int[] duplicate = new int[i];
                 for (int j = 0; j < test.length; j++) {
-                    int randGenInt = Math.abs(gen.nextInt());
+                    int randGenInt = Math.abs(gen.nextInt() % 10000);
                     test[j] = randGenInt;
                     duplicate[j] = randGenInt;
                 }
@@ -111,7 +80,8 @@ public class VDriver{
         return true;
     }
 
-    public static boolean test(int[] data, int k, int kthElement){
+    public static boolean test(int[] data, int k){
+        int kthElement = data[k];
         for (int i = 0; i < data.length; i++){
             if (i < k){
                 if (data[i] > kthElement){

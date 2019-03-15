@@ -10,25 +10,12 @@ public class Quick{
     }
 
     private static void quickSortHelp(int[] data, int start, int end){
-        int middleIndex = ((end - start + 1) / 2) + start; //end - start + 1 gives the length of the subsection in this recursive call
-        quickselect(data, middleIndex, start, end);
-        //System.out.println("start: "+start+", end: "+end+", middleIndex: "+middleIndex+", test: "+Arrays.toString(data));
-        //element at middle index is now in place
-        //if middleIndex <= start+1, then the element before middleIndex is already in place
-        if (middleIndex > start+1){
-            quickSortHelp(data, start, middleIndex - 1);
+        if (start >= end){
+            return;
         }
-        //if middleIndex is the penultimate index on the list (ie end - 1), then the last index is already in place
-        if (middleIndex < end - 1){
-            quickSortHelp(data, middleIndex + 1, end);
-        }
-    }
-
-
-    /*return the value that is the kth smallest value of the array.
-    */
-    private static int quickselect(int[] data, int k, int start, int end){
-        return quickSelectHelp(data, k, start, end);
+        int pivot = partitionDutch(data, start, end);
+        quickSortHelp(data, start, pivot - 1);
+        quickSortHelp(data, pivot+1, end);
     }
 
     /*return the value that is the kth smallest value of the array.
@@ -59,67 +46,68 @@ public class Quick{
     *@return the index of the final position of the pivot element.
     */
     private static int partitionDutch(int[] data,int start, int end){
-      int inputtedEnd = end;
-      int inputtedStart = start;
-      int pivot = 0; //to initialize
-      int pivotIndex = start;
-      Random r = new Random();
-      for (int i = 0; i < inputtedEnd - inputtedStart; i++){
-          if (i == 0){
-              //finding the median value of data[start], data[start], and data[randomly chosen index in between]
-              int startVal = data[start];
-              int endVal = data[end];
-              int randIndex = Math.abs(r.nextInt(end - start)) + start;
-              int randVal = data[randIndex];
-              if (startVal <= randVal && randVal <= endVal || startVal >= randVal && randVal >= endVal){
-                pivotIndex = randIndex;
-              } else if (randVal <= endVal && endVal <= startVal || randVal >= endVal && endVal >= startVal){
-                pivotIndex = end;
-              } else if (endVal <= startVal && startVal <= randVal || endVal >= startVal && startVal >= randVal){
-                pivotIndex = start;
-              }
-              pivot = data[pivotIndex];
-              int a = data[start];
-              data[start] = data[pivotIndex];
-              data[pivotIndex] = a;
-              pivotIndex = start;
-              start++;
-          }
-          //this section of code terminates the rest of the loop in effect
-          if (start == end){
-              if (data[start] >= pivot){
-                  int c = data[start-1];
-                  data[start-1] = data[pivotIndex];
-                  data[pivotIndex] = c;
-                  pivotIndex = start - 1;
-              } else {
-                  int c = data[start];
-                  data[start] = data[pivotIndex];
-                  data[pivotIndex] = c;
+        int inputtedEnd = end;
+        int inputtedStart = start;
+        int pivot = 0; //to initialize
+        int pivotIndex = start;
+        Random r = new Random();
+        for (int i = 0; i < inputtedEnd - inputtedStart; i++){
+            if (i == 0){
+                //finding the median value of data[start], data[start], and data[randomly chosen index in between]
+                int startVal = data[start];
+                int endVal = data[end];
+                int randIndex = Math.abs(r.nextInt(end - start)) + start;
+                int randVal = data[randIndex];
+                if (startVal <= randVal && randVal <= endVal || startVal >= randVal && randVal >= endVal){
+                  pivotIndex = randIndex;
+                } else if (randVal <= endVal && endVal <= startVal || randVal >= endVal && endVal >= startVal){
+                  pivotIndex = end;
+                } else if (endVal <= startVal && startVal <= randVal || endVal >= startVal && startVal >= randVal){
                   pivotIndex = start;
-              }
-          }
-          //swapping part of the code
-          if (data[start] < pivot){
-              start++;
-          } else if (data[start] > pivot){
-              int b = data[end];
-              data[end] = data[start];
-              data[start] = b;
-              end--;
-          } else {
-              //50-50 shot of throwing it left or right of pivot
-              int chance = Math.abs(r.nextInt(2));
-              if (chance == 0){
-                  start++;
-              } else {
+                }
+                pivot = data[pivotIndex];
+                int a = data[start];
+                data[start] = data[pivotIndex];
+                data[pivotIndex] = a;
+                pivotIndex = start;
+                start++;
+            }
+            //this section of code terminates the rest of the loop in effect
+            if (start == end){
+                if (data[start] >= pivot){
+                    int c = data[start-1];
+                    data[start-1] = data[pivotIndex];
+                    data[pivotIndex] = c;
+                    pivotIndex = start - 1;
+                } else {
+                    int c = data[start];
+                    data[start] = data[pivotIndex];
+                    data[pivotIndex] = c;
+                    pivotIndex = start;
+                }
+            }
+            //swapping part of the code
+            if (data[start] < pivot){
+                start++;
+            } else if (data[start] > pivot){
                 int b = data[end];
                 data[end] = data[start];
                 data[start] = b;
                 end--;
-              }
-          }
+            } else {
+                //50-50 shot of throwing it left or right of pivot
+                int chance = Math.abs(r.nextInt(2));
+                if (chance == 0){
+                    start++;
+                } else {
+                  int b = data[end];
+                  data[end] = data[start];
+                  data[start] = b;
+                  end--;
+                }
+            }
+        }
+        return pivotIndex;
       }
-      return pivotIndex;
-    }
+
 }
