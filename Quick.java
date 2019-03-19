@@ -10,12 +10,13 @@ public class Quick{
     }
 
     private static void quickSortHelp(int[] data, int start, int end){
-        if (start >= end){
-            return;
+        if (end - start <= 10){
+            insertionSort(data, start, end);
+        } else {
+            int pivot = partitionDutch(data, start, end);
+            quickSortHelp(data, start, pivot - 1);
+            quickSortHelp(data, pivot+1, end);
         }
-        int pivot = partitionDutch(data, start, end);
-        quickSortHelp(data, start, pivot - 1);
-        quickSortHelp(data, pivot+1, end);
     }
 
     /*return the value that is the kth smallest value of the array.
@@ -108,6 +109,24 @@ public class Quick{
             }
         }
         return pivotIndex;
+      }
+
+      private static void insertionSort(int[] ary, int start, int end){
+        int storer = ary[start];
+        boolean madeSwaps = false;
+        for (int n = start+1; n < end+1; n++){ //loops through whole thing, starting with the unsorted part
+          storer = ary[n]; //the value that wants to be sorted
+          int i = n;
+          while (i > start && storer < ary[i-1]){ //looping through sorted part and finding out where to place it
+            ary[i] = ary[i-1]; //while looping, shifting over the elements to make room for the storer
+            i--;
+            madeSwaps = true;
+          }
+          if (madeSwaps){ //only if the while loop runs will you actually edit the sorted part
+            ary[i] = storer;
+          }
+          madeSwaps = false; //resets the boolean so next pass has a clean slate
+        }
       }
 
 }
