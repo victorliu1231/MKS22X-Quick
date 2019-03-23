@@ -2,6 +2,7 @@ import java.util.Random;
 import java.util.Arrays;
 
 public class VDriver{
+    public static long difftime;
     public static void main(String[]args){
         //test(500000,4000000);
         //test(1000000,1000000);
@@ -13,14 +14,17 @@ public class VDriver{
         System.out.println(Quick.quickselect(test, 3));
         System.out.println(Quick.quickselect(test, 4));
         
-        for (int i = 1; i <= 1000; i++){
+        for (int i = 100000000; i <= 100000000; i++){
             int[] ary = new int[i];
             Random r = new Random();
             for (int in = 0; in < ary.length; in++){
-                ary[in] = Math.abs(r.nextInt() % 100);
+                ary[in] = Math.abs(r.nextInt() % 100000000);
             }
             int k = Math.abs(r.nextInt()) % i;
+            long time1 = System.currentTimeMillis();
             int ok = Quick.quickselect(ary, k);
+            long time2 = System.currentTimeMillis();
+            difftime = time2 - time1;
             try {
                 if (!test(ary, k)){
                     System.out.println(k);
@@ -35,7 +39,7 @@ public class VDriver{
                 System.exit(0);
             }
         }
-        System.out.println("success");
+        System.out.println("success: "+difftime+" ms");
     }
 
     public static void test(int start, int end){
