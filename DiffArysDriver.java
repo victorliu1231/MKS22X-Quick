@@ -53,21 +53,19 @@ public class DiffArysDriver{
   }
 
   public static void main(String[]args){
-    //if(args.length < 2)return;
+    if(args.length < 2) return;
     
-    int size = 1000000; //Integer.parseInt(args[0]);
-    int type = 0;  //Integer.parseInt(args[1]);
+    int size = Integer.parseInt(args[0]);
+    int type = Integer.parseInt(args[1]);
 
     int [] start = makeArray(size,type);
     int [] result = Arrays.copyOf(start,start.length);
     Arrays.sort(result);
     
     long startTime = System.currentTimeMillis();
-    /*
-     * Test your sort here //yoursort(start);
-     * Add code to switch which sort is tested by changing one of the args!
-     */
+
     Quick.quicksort(start);
+
     long elapsedTime = System.currentTimeMillis() - startTime;
     if(Arrays.equals(start,result)){
       System.out.println("PASS Case "+name(type)+"\t array, size:"+start.length+"\t"+elapsedTime/1000.0+"sec ");

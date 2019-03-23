@@ -17,8 +17,6 @@ public class Quick{
             insertionSort(data, lo, hi);
         } else {
             int[] mid = partitionDutch(data, lo, hi);
-            //System.out.println("lo: "+lo+", mid: "+Arrays.toString(mid)+", hi: "+hi);
-            //System.out.println();
             quickSortHelp(data, lo, mid[0] - 1);
             quickSortHelp(data, mid[1]+1, hi);
         }
@@ -26,12 +24,14 @@ public class Quick{
 
     /*return the value that is the kth smallest value of the array.
     */
-    //for practice
     public static int quickselect(int[] data, int k){
         return quickSelectHelp(data, k, 0, data.length-1);
     }
 
     private static int quickSelectHelp(int[] data, int k, int lo, int hi){
+        if (lo == hi){
+            return data[lo];
+        }
         int[] midIndex = partitionDutch(data, lo, hi);
         if (k < midIndex[0]){
             return quickSelectHelp(data,k,lo,midIndex[0]-1);
@@ -53,23 +53,23 @@ public class Quick{
     */
     public static int[] partitionDutch(int[] data,int lo, int hi){
         Random r = new Random();
+        boolean hasReachedOneOfDuplicates = false;
 
         //finding the median value of data[lo], data[lo], and data[randomly chosen index in between]
-        //int loVal = data[lo];
-        //int hiVal = data[hi];
-        int randIndex = Math.abs(r.nextInt() % (hi - lo)) + lo;
-        //int randVal = data[randIndex];
-        //int mid = 0; //to initialize
-        boolean hasReachedOneOfDuplicates = false;
+        int mid = Math.abs(r.nextInt() % (hi - lo)) + lo;
+        /*
+        int loVal = data[lo];
+        int hiVal = data[hi];
+        int randVal = data[mid];
         //test if we need all this finding median shit is faster
-        /*if (loVal <= randVal && randVal <= hiVal || loVal >= randVal && randVal >= hiVal){
-          mid = randIndex;
+        if (loVal <= randVal && randVal <= hiVal || loVal >= randVal && randVal >= hiVal){
+          //nothing, mid stays same
         } else if (randVal <= hiVal && hiVal <= loVal || randVal >= hiVal && hiVal >= loVal){
           mid = hi;
         } else if (hiVal <= loVal && loVal <= randVal || hiVal >= loVal && loVal >= randVal){
           mid = lo;
-        }*/
-        int mid = randIndex;
+        }
+        */
         swap(data, lo, mid);
         mid = lo + 1;
         //System.out.println("median: "+mid+", start: "+lo+", randVal: "+randVal+", end: "+hi);
