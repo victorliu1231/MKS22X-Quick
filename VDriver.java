@@ -35,6 +35,7 @@ public class VDriver{
                 System.exit(0);
             }
         }
+        System.out.println("success");
     }
 
     public static void test(int start, int end){

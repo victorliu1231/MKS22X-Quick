@@ -9,13 +9,18 @@ public class Quick{
         quickSortHelp(data, 0, data.length-1);
     }
 
-    private static void quickSortHelp(int[] data, int start, int end){
-        if (end - start <= 10){
-            insertionSort(data, start, end);
+    private static void quickSortHelp(int[] data, int lo, int hi){
+        if (lo >= hi){
+            return;
+        }
+        else if (hi - lo <= 47){
+            insertionSort(data, lo, hi);
         } else {
-            int pivot = partitionDutch(data, start, end);
-            quickSortHelp(data, start, pivot - 1);
-            quickSortHelp(data, pivot+1, end);
+            int[] mid = partitionDutch(data, lo, hi);
+            //System.out.println("lo: "+lo+", mid: "+Arrays.toString(mid)+", hi: "+hi);
+            //System.out.println();
+            quickSortHelp(data, lo, mid[0] - 1);
+            quickSortHelp(data, mid[1]+1, hi);
         }
     }
 
@@ -26,27 +31,133 @@ public class Quick{
         return quickSelectHelp(data, k, 0, data.length-1);
     }
 
-    private static int quickSelectHelp(int[] data, int k, int start, int end){
-        int pivotIndex = partitionDutch(data, start, end);
-        if (k < pivotIndex){
-            return quickSelectHelp(data,k,start,pivotIndex-1);
+    private static int quickSelectHelp(int[] data, int k, int lo, int hi){
+        int[] midIndex = partitionDutch(data, lo, hi);
+        if (k < midIndex[0]){
+            return quickSelectHelp(data,k,lo,midIndex[0]-1);
         }
-        if (k > pivotIndex){
-            return quickSelectHelp(data,k,pivotIndex+1,end);
+        if (k > midIndex[1]){
+            return quickSelectHelp(data,k,midIndex[1]+1,hi);
         } else {
-            return data[pivotIndex];
+            return data[midIndex[0]];
         }
     }
 
-    /*Modify the array such that:
-    *1. Only the indices from start to end inclusive are considered in range
-    *2. A random index from start to end inclusive is chosen, the corresponding
-    *   element is designated the pivot element.
-    *3. all elements in range that are smaller than the pivot element are placed before the pivot element.
-    *4. all elements in range that are larger than the pivot element are placed after the pivot element.
-    *@return the index of the final position of the pivot element.
+      /*Modify the array such that:
+    *1. Only the indices from lo to hi inclusive are considered in range
+    *2. A random index from lo to hi inclusive is chosen, the corresponding
+    *   element is designated the mid element.
+    *3. all elements in range that are smaller than the mid element are placed before the mid element.
+    *4. all elements in range that are larger than the mid element are placed after the mid element.
+    *@return the index of the final position of the mid element.
     */
-    private static int partitionDutch(int[] data,int start, int end){
+    public static int[] partitionDutch(int[] data,int lo, int hi){
+        Random r = new Random();
+
+        //finding the median value of data[lo], data[lo], and data[randomly chosen index in between]
+        //int loVal = data[lo];
+        //int hiVal = data[hi];
+        int randIndex = Math.abs(r.nextInt() % (hi - lo)) + lo;
+        //int randVal = data[randIndex];
+        //int mid = 0; //to initialize
+        boolean hasReachedOneOfDuplicates = false;
+        //test if we need all this finding median shit is faster
+        /*if (loVal <= randVal && randVal <= hiVal || loVal >= randVal && randVal >= hiVal){
+          mid = randIndex;
+        } else if (randVal <= hiVal && hiVal <= loVal || randVal >= hiVal && hiVal >= loVal){
+          mid = hi;
+        } else if (hiVal <= loVal && loVal <= randVal || hiVal >= loVal && loVal >= randVal){
+          mid = lo;
+        }*/
+        int mid = randIndex;
+        swap(data, lo, mid);
+        mid = lo + 1;
+        //System.out.println("median: "+mid+", start: "+lo+", randVal: "+randVal+", end: "+hi);
+        //lo is pivotIndex and mid is start
+
+        while (mid <= hi){
+            //System.out.println("pivot: "+lo+", start: "+mid+", hi: "+hi+", array: ");//+Arrays.toString(data));
+            //swapping part of the code
+            if (data[lo] < data[mid]){
+                swap(data, hi, mid);
+                hi--;
+            } else if (data[lo] > data[mid]){
+                if (hasReachedOneOfDuplicates){
+                    swap(data, lo, mid);
+                    lo++;
+                }
+                if (mid <= hi){
+                    mid++;
+                }
+            } else {
+                if (hasReachedOneOfDuplicates){
+                    if (mid <= hi){
+                        mid++;
+                    }
+                } else {
+                    swap(data, mid-1, lo);
+                    lo = mid-1;
+                    if (mid <= hi){
+                        mid++;
+                    }
+                    hasReachedOneOfDuplicates = true;
+                }
+            }
+        }
+        mid--;
+        if (!hasReachedOneOfDuplicates){
+            if (data[lo] < data[mid]){
+                swap(data, lo, mid-1);
+            } else {
+                swap(data, lo, mid);
+            }
+            lo = mid;
+            hi = mid;
+        }
+        //System.out.println("pivot: "+lo+", start: "+mid+", hi: "+hi+", array: "+Arrays.toString(data));
+        int[] ans = new int[]{lo, mid};
+        return ans;
+      }
+
+      private static void insertionSort(int[] ary, int lo, int hi){
+        int storer = ary[lo];
+        boolean madeSwaps = false;
+        for (int n = lo+1; n < hi+1; n++){ //loops through whole thing, loing with the unsorted part
+          storer = ary[n]; //the value that wants to be sorted
+          int i = n;
+          while (i > lo && storer < ary[i-1]){ //looping through sorted part and finding out where to place it
+            ary[i] = ary[i-1]; //while looping, shifting over the elements to make room for the storer
+            i--;
+            madeSwaps = true;
+          }
+          if (madeSwaps){ //only if the while loop runs will you actually edit the sorted part
+            ary[i] = storer;
+          }
+          madeSwaps = false; //resets the boolean so next pass has a clean slate
+        }
+      }
+
+      private static void swap(int[] data, int x, int y){
+          int a = data[x];
+          data[x] = data[y];
+          data[y] = a;
+      }
+
+      public static void quicksortNonOptimized(int[] data){
+        quickSortHelpNonOptimized(data, 0, data.length-1);
+    }
+
+    private static void quickSortHelpNonOptimized(int[] data, int start, int end){
+        if (end - start <= 43){
+            insertionSort(data, start, end);
+        } else {
+            int pivot = partition(data, start, end);
+            quickSortHelpNonOptimized(data, start, pivot - 1);
+            quickSortHelpNonOptimized(data, pivot+1, end);
+        }
+    }
+
+    private static int partition(int[] data,int start, int end){
         int inputtedEnd = end;
         int inputtedStart = start;
         int pivot = 0; //to initialize
@@ -109,24 +220,6 @@ public class Quick{
             }
         }
         return pivotIndex;
-      }
-
-      private static void insertionSort(int[] ary, int start, int end){
-        int storer = ary[start];
-        boolean madeSwaps = false;
-        for (int n = start+1; n < end+1; n++){ //loops through whole thing, starting with the unsorted part
-          storer = ary[n]; //the value that wants to be sorted
-          int i = n;
-          while (i > start && storer < ary[i-1]){ //looping through sorted part and finding out where to place it
-            ary[i] = ary[i-1]; //while looping, shifting over the elements to make room for the storer
-            i--;
-            madeSwaps = true;
-          }
-          if (madeSwaps){ //only if the while loop runs will you actually edit the sorted part
-            ary[i] = storer;
-          }
-          madeSwaps = false; //resets the boolean so next pass has a clean slate
-        }
       }
 
 }
