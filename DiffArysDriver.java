@@ -53,7 +53,7 @@ public class DiffArysDriver{
   }
 
   public static void main(String[]args){
-    if(args.length < 2) return;
+    //if(args.length < 2) return;
     
     int size = Integer.parseInt(args[0]);
     int type = Integer.parseInt(args[1]);
